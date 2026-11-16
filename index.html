@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Untuk Kakakku di Hari Bahagianya</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Great+Vibes&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: { light: '#F7E7CE', DEFAULT: '#D4AF37', dark: '#AA7C11' },
+                        ivory: '#FFFFF0',
+                        charcoal: '#333333',
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        script: ['"Great Vibes"', 'cursive'],
+                        sans: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        /* Background Floral Pattern */
+        body { 
+            background-color: #FAFAFA; 
+            color: #333333; 
+            overflow-x: hidden; 
+            user-select: none; 
+            -webkit-user-select: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0c27.614 0 50 22.386 50 50S77.614 100 50 100 0 77.614 0 50 22.386 0 50 0zm0 4.545C24.896 4.545 4.545 24.896 4.545 50S24.896 95.455 50 95.455 95.455 75.104 95.455 50 75.104 4.545 50 4.545z' fill='%23D4AF37' fill-opacity='0.04' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+        body.locked { overflow: hidden; }
+        
+        .gold-gradient-text { background: linear-gradient(135deg, #AA7C11 0%, #D4AF37 50%, #AA7C11 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 10px; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .btn-interactive:active { transform: scale(0.95); transition: transform 0.1s; }
+        
+        .thick-gold-card {
+            border: 3px solid rgba(212, 175, 55, 0.5);
+            background-color: white;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.15);
+        }
+
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg) scale(1.05); }
+            50% { transform: rotate(10deg) scale(1.05); }
+            75% { transform: rotate(-5deg) scale(1.05); }
+            100% { transform: rotate(0deg); }
+        }
+        .shake-active { animation: shake 0.2s ease-in-out; }
+
+        /* Animasi Hotspot Bouquet */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 0.9; }
+            100% { transform: scale(2.2); opacity: 0; }
+        }
+        .hotspot-pulse::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 9999px;
+            background-color: #D4AF37;
+            animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body class="locked antialiased">
+
+    <!-- CONTAINER HUJAN CONFETTI -->
+    <div id="confetti-rain-container" class="fixed inset-0 pointer-events-none z-30 overflow-hidden"></div>
+
+    <!-- AUDIO ELEMENTS -->
+    <audio id="bg-music" loop preload="auto"><source src="assets/a-thousand-years-instrumental.mp3" type="audio/mpeg"></audio>
+    <audio id="track-1" preload="auto"><source src="assets/galau-abadi.mp3" type="audio/mpeg"></audio>
+    <audio id="track-2" preload="auto"><source src="assets/anthem-hujan.mp3" type="audio/mpeg"></audio>
+
+    <!-- FLOATING CONTROLS -->
+    <div id="music-control" class="fixed top-4 right-4 z-40 opacity-0 pointer-events-none transition-opacity duration-700 flex gap-2">
+        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'}); playClick();" class="btn-interactive w-10 h-10 rounded-full bg-white/90 backdrop-blur shadow-md border-2 border-gold/50 flex items-center justify-center text-gold-dark hover:bg-gold hover:text-white transition">
+            ↑
+        </button>
+        <button onclick="toggleAudio(); playClick();" class="btn-interactive w-10 h-10 rounded-full bg-white/90 backdrop-blur shadow-md border-2 border-gold/50 flex items-center justify-center text-gold-dark hover:bg-gold hover:text-white transition">
+            <svg id="icon-pause" class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+            <svg id="icon-play" class="w-4 h-4 fill-current hidden" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+    </div>
+
+    <!-- 1. COVER AWAL (DENGAN FOOTER LOGO MURNI FULL WIDTH) -->
+    <div id="cover-overlay" class="fixed inset-0 z-50 bg-ivory flex flex-col justify-between items-center pt-8 text-center" style="background-image: radial-gradient(circle at center, #FFFFF0 0%, #F7E7CE 150%);">
+        <div class="w-full max-w-xs border-t-2 border-gold/50 pt-4 mt-4 px-8 relative">
+            <p class="font-sans text-[10px] tracking-[0.3em] uppercase text-gold-dark font-bold">Happy Wedding</p>
+        </div>
+        
+        <div class="my-auto max-w-md px-8 relative z-10">
+            <p class="font-serif italic text-lg text-charcoal/80 mb-2">Dari adik tersayang, untuk</p>
+            <h1 class="font-script text-5xl sm:text-6xl gold-gradient-text py-3 transform transition hover:scale-105 duration-700">Septia</h1>
+            <div class="w-16 h-[2px] bg-gold mx-auto my-6"></div>
+            
+            <button onclick="openLetter(event)" class="btn-interactive group relative inline-flex items-center justify-center px-8 py-3 overflow-hidden font-sans text-xs tracking-[0.2em] uppercase text-gold-dark border-2 border-gold rounded-full hover:text-white transition duration-500 bg-white/70 backdrop-blur-sm shadow-[0_0_15px_rgba(212,175,55,0.4)]">
+                <span class="absolute inset-0 w-full h-full bg-gold transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></span>
+                <span class="relative z-10 font-bold">Buka Surat Ini</span>
+            </button>
+        </div>
+
+        <!-- Footer Cover Awal: Full Width Hitam & Hanya Logo Murni Tanpa Teks -->
+        <div class="w-full bg-black py-6 px-6 border-t-[3px] border-gold/50 flex justify-center items-center shadow-[0_-10px_30px_rgba(212,175,55,0.15)]">
+            <img src="assets/logo.jpg" alt="The Queen Bucket" class="w-full max-w-[220px] object-contain mix-blend-screen">
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT APP -->
+    <main id="main-content" class="max-w-xl mx-auto px-4 pt-12 pb-12 hidden opacity-0 transition-opacity duration-1000 relative z-10">
+        
+        <!-- 2. VISUAL NOTIFIKASI VIDEO DARI PENGIRIM (16:9 & BERUBAH JADI TOMBOL SETELAH SELESAI) -->
+        <section id="notif-video-section" class="mb-10">
+            
+            <!-- Wadah Utama Video & Notifikasi -->
+            <div id="sender-video-wrapper">
+                <!-- Banner Visual Notifikasi Pesan Masuk -->
+                <div id="notif-banner" class="bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-lg border-2 border-gold flex items-center gap-3.5 mb-5 cursor-pointer hover:bg-ivory transition" onclick="toggleSenderVideo()">
+                    <div class="relative shrink-0">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-gold to-gold-dark text-white flex items-center justify-center font-serif font-bold text-xl shadow-md">
+                            R
+                        </div>
+                        <span id="notif-ping" class="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-red-500 border-2 border-white"></span>
+                        </span>
+                    </div>
+                    <div class="flex-1 text-left">
+                        <div class="flex items-center justify-between">
+                            <p class="font-sans text-[10px] font-bold uppercase tracking-wider text-gold-dark">Pesan Video Masuk • Baru Saja</p>
+                            <span id="notif-status-pill" class="text-[9px] font-sans bg-gold/15 text-gold-dark px-2 py-0.5 rounded-full font-semibold">1 Belum Dibaca</span>
+                        </div>
+                        <p class="font-serif text-base font-bold text-charcoal leading-tight mt-0.5">Rinda (Adik Tersayangmu)</p>
+                        <p id="notif-subtext" class="font-sans text-xs text-charcoal/70 mt-0.5">Mengirimkan video ucapan pernikahan. Tonton sampai habis untuk membuka surat 🔒</p>
+                    </div>
+                </div>
+
+                <!-- Kartu Pemutar Video Pengirim 16:9 (assets/dari-pengirim.mov) -->
+                <div class="bg-ivory p-4 sm:p-6 rounded-[2rem] thick-gold-card text-center relative overflow-hidden">
+                    <div class="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-xl border-4 border-gold/40 cursor-pointer group" onclick="toggleSenderVideo()">
+                        <video id="sender-video" class="w-full h-full object-cover" playsinline preload="metadata">
+                            <source src="assets/dari-pengirim.mov" type="video/mp4">
+                            <source src="assets/dari-pengirim.mov" type="video/quicktime">
+                        </video>
+                        <div id="sender-video-overlay" class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center transition-opacity duration-300 p-4">
+                            <div class="w-16 h-16 bg-white/95 rounded-full flex items-center justify-center shadow-lg backdrop-blur group-hover:scale-110 transition border-2 border-gold/40 mb-3">
+                                <svg class="w-8 h-8 text-gold-dark ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                            <span class="bg-black/65 backdrop-blur-sm text-white text-[10px] font-sans uppercase tracking-widest px-3 py-1 rounded-full border border-gold/30">
+                                Ketuk untuk Memutar Video
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Indikator Kunci Scroll -->
+                    <div id="scroll-lock-badge" class="mt-5 inline-flex items-center gap-2 bg-white px-5 py-2.5 rounded-full border-2 border-gold/40 shadow-sm text-xs font-sans font-semibold text-charcoal">
+                        <span id="lock-icon">🔒</span>
+                        <span id="lock-text">Surat di bawah masih terkunci • Tonton video sampai selesai</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wadah Tombol Putar Ulang (Muncul menggantikan section video setelah selesai ditonton) -->
+            <div id="sender-video-replay-container" class="hidden text-center py-2">
+                <button onclick="rewatchSenderVideo()" class="btn-interactive inline-flex items-center gap-2.5 bg-white hover:bg-ivory text-gold-dark font-sans text-xs font-bold tracking-widest uppercase px-6 py-3.5 rounded-full border-2 border-gold shadow-md hover:shadow-lg transition">
+                    <span>🎬</span>
+                    <span>Putar Ulang Video Ucapan Rinda</span>
+                </button>
+            </div>
+
+        </section>
+
+        <!-- CONTAINER KONTEN TERKUNCI (TERBUKA SETELAH VIDEO PENGIRIM SELESAI DITONTON) -->
+        <div id="locked-sections" class="hidden opacity-0 transition-opacity duration-1000">
+
+            <!-- HEADER SURAT -->
+            <header class="text-center mb-10 gs-reveal">
+                <p class="font-sans text-[10px] tracking-[0.35em] uppercase text-gold-dark mb-2 font-semibold">Happy Wedding</p>
+                <h2 class="font-serif text-3xl font-normal italic text-charcoal">Melepasmu ke Babak Baru</h2>
+            </header>
+
+            <!-- 3. KARTU SURAT -->
+            <section class="thick-gold-card rounded-[2rem] mb-6 gs-reveal relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-16 h-16 opacity-30 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI0Q0QUYzNyI+PHBhdGggZD0iTTEyIDJDMiAxMiA1LjUgMjIgMTIgMjJzMTAtMTAgMTAtMjBTMiAxMiAxMiAyem0wIDIwYy00LjUgMC03LjUtNi03LjUtMTBTMTIgMiAxMiAyaDguNWMwIDEuNS0zIDguNS04LjUgMTB6Ii8+PC9zdmc+')] bg-no-repeat -scale-y-100 -scale-x-100 -translate-x-4 -translate-y-4"></div>
+                <div class="absolute bottom-0 right-0 w-16 h-16 opacity-30 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI0Q0QUYzNyI+PHBhdGggZD0iTTEyIDJDMiAxMiA1LjUgMjIgMTIgMjJzMTAtMTAgMTAtMjBTMiAxMiAxMiAyem0wIDIwYy00LjUgMC03LjUtNi03LjUtMTBTMTIgMiAxMiAyaDguNWMwIDEuNS0zIDguNS04LjUgMTB6Ii8+PC9zdmc+')] bg-no-repeat translate-x-4 translate-y-4"></div>
+
+                <div class="p-8 sm:p-10 h-[45vh] overflow-y-auto custom-scrollbar font-sans text-[14px] font-light leading-[2.2] text-charcoal/90 text-justify space-y-5 rounded-[2rem] relative z-10">
+                    <p class="font-serif text-xl italic text-charcoal text-center mb-6">Melihatmu berdiri dengan gaun putih hari ini, rasanya waktu berjalan terlalu cepat.</p>
+                    <p>Masih segar sekali di ingatanku masa-masa ketika dunia kita hanya sebesar kamar tidur yang kita bagi bersama. Kita tumbuh lewat ribuan malam dengan obrolan rahasia sebelum tidur, bertengkar hebat karena hal-hal sepele, lalu berbaikan lima menit kemudian.</p>
+                    <p>Kita sudah melewati begitu banyak musim. Aku masih ingat betul malam-malam ketika kita sama-sama hancur, menangis tanpa suara lalu saling menguatkan dalam diam. Selama bertahun-tahun, kamu bukan hanya saudara bagiku, tapi juga rumah pertama tempatku selalu pulang.</p>
+                    <p>Rasanya belum sepenuhnya siap menyadari bahwa mulai malam ini, kamu punya rumah baru untuk dituju. Tapi di atas semua rasa sedih itu, hatiku jauh lebih penuh oleh rasa syukur. Melihat caranya menatapmu dan menjagamu, aku tahu kamu sudah berada di tangan yang tepat.</p>
+                    <p>Berbahagialah sepenuhnya di babak barumu ini. Bangunlah rumah yang hangat seperti yang selalu kamu impikan. Pintu dan telingaku akan selalu terbuka untukmu.</p>
+                </div>
+            </section>
+
+            <!-- 4. KARTU GALERI -->
+            <section class="thick-gold-card rounded-[2rem] py-8 mb-16 gs-reveal relative overflow-hidden" onclick="playClick()">
+                <div class="relative w-full">
+                    <div class="absolute w-8 h-full left-0 top-0 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
+                    <div class="absolute w-8 h-full right-0 top-0 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
+                    <div id="photo-slider" class="flex overflow-x-auto gap-4 px-6 no-scrollbar snap-x touch-pan-x items-center">
+                        <div class="shrink-0 w-44 bg-white p-2 shadow-md border-2 border-gold/20 rounded"><img src="assets/foto-1.jpg" class="w-full aspect-square object-cover" alt="Memori"></div>
+                        <div class="shrink-0 w-44 bg-white p-2 shadow-md border-2 border-gold/20 rounded"><img src="assets/foto-2.jpg" class="w-full aspect-square object-cover" alt="Memori"></div>
+                        <div class="shrink-0 w-44 bg-white p-2 shadow-md border-2 border-gold/20 rounded"><img src="assets/foto-3.jpg" class="w-full aspect-square object-cover" alt="Memori"></div>
+                        <div class="shrink-0 w-44 bg-white p-2 shadow-md border-2 border-gold/20 rounded"><img src="assets/foto-4.jpg" class="w-full aspect-square object-cover" alt="Memori"></div>
+                        <div class="shrink-0 w-44 bg-white p-2 shadow-md border-2 border-gold/20 rounded"><img src="assets/foto-5.jpg" class="w-full aspect-square object-cover" alt="Memori"></div>
+                        <div class="shrink-0 w-44 bg-white p-2 shadow-md border-2 border-gold/20 rounded"><img src="assets/foto-6.jpg" class="w-full aspect-square object-cover" alt="Memori"></div>
+                        <div class="shrink-0 w-44 bg-white p-2 shadow-md border-2 border-gold/20 rounded"><img src="assets/foto-7.jpg" class="w-full aspect-square object-cover" alt="Memori"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. FILOSOFI BOUQUET INTERAKTIF (POLOS DULU BARU MUNCUL ANGKA) -->
+            <section class="mb-20 gs-reveal">
+                <div class="thick-gold-card p-6 sm:p-8 rounded-[2rem] text-center relative overflow-hidden">
+                    <div class="inline-block bg-ivory px-4 py-1 text-[10px] tracking-[0.25em] uppercase text-gold-dark font-bold rounded-full border border-gold/40 mb-3">
+                        Rahasia di Balik Buketmu
+                    </div>
+                    <h3 class="font-serif text-2xl sm:text-3xl italic text-charcoal mb-3 leading-snug">
+                        Kamu tau ngga kenapa aku kasih kamu bucket satin ini dari <span class="gold-gradient-text font-bold not-italic">The Queen Bouquet</span>?
+                    </h3>
+                    <p id="bouquet-subtext" class="font-sans text-xs text-charcoal/60 mb-6">
+                        Lihat dulu keindahan buket satin spesial yang aku pilihkan khusus untuk hari bahagiamu ini.
+                    </p>
+
+                    <!-- Container Gambar 1:1 (Square) & Lebih Kecil -->
+                    <div class="relative w-full max-w-[260px] mx-auto aspect-square rounded-2xl overflow-hidden border-[3px] border-gold/50 shadow-xl mb-5 bg-charcoal">
+                        <img src="assets/the-queen-bouquet.png" onerror="this.src='assets/the-queen-bouquet.png'" alt="Bouquet Satin The Queen Bouquet" class="w-full h-full object-cover object-center">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10 pointer-events-none"></div>
+
+                        <!-- Wrapper Hotspot (Tersembunyi di awal agar buket terlihat polosan) -->
+                        <div id="hotspot-wrapper" class="hidden opacity-0 transition-opacity duration-500">
+                            <!-- Hotspot 1: Mahkota Kecil (Kiri Atas) -->
+                            <button onclick="revealPhilosophy(1, this)" style="top: 25%; left: 34%;" class="hotspot-btn hotspot-pulse absolute -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gold text-white font-bold text-xs flex items-center justify-center shadow-lg border-2 border-white cursor-pointer z-20 transition transform hover:scale-110">
+                                1
+                            </button>
+
+                            <!-- Hotspot 2: Mawar Satin Merah (Tengah) -->
+                            <button onclick="revealPhilosophy(2, this)" style="top: 41%; left: 50%;" class="hotspot-btn hotspot-pulse absolute -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gold text-white font-bold text-xs flex items-center justify-center shadow-lg border-2 border-white cursor-pointer z-20 transition transform hover:scale-110">
+                                2
+                            </button>
+
+                            <!-- Hotspot 3: Sepasang Kupu-Kupu (Kanan Tengah) -->
+                            <button onclick="revealPhilosophy(3, this)" style="top: 52%; left: 62%;" class="hotspot-btn hotspot-pulse absolute -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gold text-white font-bold text-xs flex items-center justify-center shadow-lg border-2 border-white cursor-pointer z-20 transition transform hover:scale-110">
+                                3
+                            </button>
+
+                            <!-- Hotspot 4: Wrap Hitam & Pita (Kiri Bawah) -->
+                            <button onclick="revealPhilosophy(4, this)" style="top: 74%; left: 24%;" class="hotspot-btn hotspot-pulse absolute -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gold text-white font-bold text-xs flex items-center justify-center shadow-lg border-2 border-white cursor-pointer z-20 transition transform hover:scale-110">
+                                4
+                            </button>
+                        </div>
+
+                        <div class="absolute bottom-2.5 inset-x-0 text-center pointer-events-none">
+                            <span class="bg-black/60 backdrop-blur-sm text-white/90 text-[9px] font-sans tracking-widest uppercase px-2.5 py-0.5 rounded-full border border-gold/30">
+                                The Queen Bouquet
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Tombol untuk memunculkan angka di atas buket polosan -->
+                    <div id="activate-hotspot-container" class="mb-2">
+                        <button onclick="activateBouquetHotspots()" class="btn-interactive bg-gradient-to-r from-gold to-gold-dark text-white text-xs font-bold tracking-widest uppercase py-3 px-6 rounded-full shadow-md hover:shadow-lg transition">
+                            Ungkap Makna Buket ✨
+                        </button>
+                    </div>
+
+                    <!-- Kotak Penjelasan Interaktif (Muncul setelah tombol Ungkap diklik) -->
+                    <div id="philosophy-box" class="hidden bg-ivory p-5 rounded-2xl border-2 border-gold/40 shadow-inner min-h-[120px] flex-col items-center justify-center text-center transition-all duration-300">
+                        <p id="phil-badge" class="text-[10px] font-sans uppercase tracking-[0.2em] text-gold-dark font-bold mb-1">Sentuh Angka Pada Buket (<span id="hotspot-counter">0</span>/4)</p>
+                        <h4 id="phil-title" class="font-serif text-xl italic font-semibold text-charcoal mb-2">Setiap Detail Punya Cerita...</h4>
+                        <p id="phil-desc" class="font-sans text-xs text-charcoal/80 leading-relaxed max-w-md">
+                            Buket ini sengaja aku pilih bukan tanpa alasan. Ketuk keempat titik berkilau di atas untuk membaca doa dan harapan yang aku titipkan di setiap kelopaknya.
+                        </p>
+                    </div>
+
+                    <!-- Pesan Kesimpulan (Muncul otomatis saat ke-4 titik selesai dibuka) -->
+                    <div id="philosophy-complete" class="hidden mt-5 bg-gradient-to-r from-gold/20 via-ivory to-gold/20 p-5 rounded-2xl border-2 border-gold shadow-md">
+                        <p class="font-serif italic text-base text-charcoal font-semibold mb-1">✨ Semua Makna Telah Terbuka ✨</p>
+                        <p class="font-sans text-xs text-charcoal/80 leading-relaxed">
+                            Sama seperti buket satin dari <strong>The Queen Bouquet</strong> ini yang tidak akan pernah layu dimakan waktu, begitu juga doa, kasih sayang, dan dukungan dariku untuk pernikahanmu. Pajang di rumah barumu nanti ya!
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. TIMELINE PERJALANAN (Foto 8 untuk Remaja, Foto 9 untuk Hari Ini) -->
+            <section class="mb-20 gs-reveal px-2">
+                <h3 class="font-serif text-2xl italic text-center text-charcoal mb-10">Jejak Waktu Kita</h3>
+                <p class="text-center text-[10px] text-charcoal/50 uppercase tracking-widest mb-6 -mt-6">Ketuk foto untuk memperjelas</p>
+                <div class="relative border-l-4 border-gold/50 ml-4 space-y-12 pb-4">
+                    
+                    <div class="relative pl-8 gs-reveal">
+                        <div class="absolute -left-[11px] top-1 w-5 h-5 rounded-full bg-ivory border-[4px] border-gold shadow-md"></div>
+                        <p class="font-sans text-[11px] font-bold tracking-widest text-gold-dark mb-3">MASA KECIL</p>
+                        <div class="timeline-polaroid w-full max-w-xs thick-gold-card p-1.5 rounded mb-3 -rotate-3 cursor-pointer transition-all duration-300 relative" onclick="togglePolaroid(this)">
+                            <img src="assets/foto-1.jpg" class="w-full h-40 object-cover pointer-events-none" alt="Timeline 1">
+                        </div>
+                        <p class="text-sm font-light text-charcoal/80">Pertama kali tidur sekamar. Berbagi mimpi, mainan, dan pertengkaran kecil yang tak terhitung jumlahnya.</p>
+                    </div>
+                    
+                    <div class="relative pl-8 gs-reveal">
+                        <div class="absolute -left-[11px] top-1 w-5 h-5 rounded-full bg-ivory border-[4px] border-gold shadow-md"></div>
+                        <p class="font-sans text-[11px] font-bold tracking-widest text-gold-dark mb-3">REMAJA</p>
+                        <div class="timeline-polaroid w-full max-w-xs thick-gold-card p-1.5 rounded mb-3 rotate-3 cursor-pointer transition-all duration-300 relative" onclick="togglePolaroid(this)">
+                            <img src="assets/foto-8.jpg" class="w-full h-40 object-cover pointer-events-none" alt="Timeline 2">
+                        </div>
+                        <p class="text-sm font-light text-charcoal/80">Fase labil. Pinjam-pinjaman baju diam-diam dan curhat soal naksir orang untuk pertama kalinya.</p>
+                    </div>
+
+                    <div class="relative pl-8 gs-reveal">
+                        <div class="absolute -left-[11px] top-1 w-5 h-5 rounded-full bg-gold border-[4px] border-white shadow-[0_0_15px_rgba(212,175,55,1)]"></div>
+                        <p class="font-sans text-[11px] font-bold tracking-widest text-gold-dark mb-3">HARI INI</p>
+                        <div class="timeline-polaroid w-full max-w-xs thick-gold-card p-1.5 rounded mb-3 rotate-1 cursor-pointer transition-all duration-300 relative" onclick="togglePolaroid(this)">
+                            <img src="assets/foto-9.jpg" class="w-full h-48 object-cover pointer-events-none" alt="Timeline 4">
+                        </div>
+                        <p class="text-sm font-light text-charcoal/80">Berdiri dengan gaun pengantinmu. Aku merelakanmu melangkah menuju kebahagiaan barumu.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7. KUIS INTERAKTIF -->
+            <section class="mb-20 gs-reveal">
+                <h3 class="font-serif text-2xl italic text-center text-charcoal mb-6">Uji Memori Kita</h3>
+                <div class="space-y-4">
+                    <div class="thick-gold-card p-5 rounded-2xl">
+                        <p class="font-sans text-sm mb-4 text-charcoal font-medium">1. Apa kebiasaan burukku yang paling sering membuatmu ngomel?</p>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="checkAnswer(this, false)" class="btn-interactive p-3 text-xs font-semibold border-2 border-gold/40 rounded-xl hover:bg-gold-light transition">Bangun Kesiangan</button>
+                            <button onclick="checkAnswer(this, true)" class="btn-interactive p-3 text-xs font-semibold border-2 border-gold/40 rounded-xl hover:bg-gold-light transition">Lupa Balas Chat</button>
+                        </div>
+                    </div>
+                    <div class="thick-gold-card p-5 rounded-2xl">
+                        <p class="font-sans text-sm mb-4 text-charcoal font-medium">2. Di mana tempat pelarian kita kalau lagi sama-sama pusing di rumah?</p>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="checkAnswer(this, true)" class="btn-interactive p-3 text-xs font-semibold border-2 border-gold/40 rounded-xl hover:bg-gold-light transition">Taman Dekat Rumah</button>
+                            <button onclick="checkAnswer(this, false)" class="btn-interactive p-3 text-xs font-semibold border-2 border-gold/40 rounded-xl hover:bg-gold-light transition">Kamar Kosong</button>
+                        </div>
+                    </div>
+                    <div class="thick-gold-card p-5 rounded-2xl">
+                        <p class="font-sans text-sm mb-4 text-charcoal font-medium">3. Makanan apa yang selalu kita rebutkan waktu masih kecil?</p>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="checkAnswer(this, false)" class="btn-interactive p-3 text-xs font-semibold border-2 border-gold/40 rounded-xl hover:bg-gold-light transition">Telur Dadar</button>
+                            <button onclick="checkAnswer(this, true)" class="btn-interactive p-3 text-xs font-semibold border-2 border-gold/40 rounded-xl hover:bg-gold-light transition">Kulit Ayam</button>
+                        </div>
+                    </div>
+                    <div class="thick-gold-card p-5 rounded-2xl">
+                        <p class="font-sans text-sm mb-4 text-charcoal font-medium">4. Siapa yang biasanya nangis duluan kalau kita nonton film sedih?</p>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="checkAnswer(this, true)" class="btn-interactive p-3 text-xs font-semibold border-2 border-gold/40 rounded-xl hover:bg-gold-light transition">Kamu Dong</button>
+                            <button onclick="checkAnswer(this, false)" class="btn-interactive p-3 text-xs font-semibold border-2 border-gold/40 rounded-xl hover:bg-gold-light transition">Jelas Aku</button>
+                        </div>
+                    </div>
+                    <div class="thick-gold-card p-5 rounded-2xl">
+                        <p class="font-sans text-sm mb-4 text-charcoal font-medium">5. Barang apa milikku yang paling sering kamu pinjam diam-diam?</p>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="checkAnswer(this, true)" class="btn-interactive p-3 text-xs font-semibold border-2 border-gold/40 rounded-xl hover:bg-gold-light transition">Baju/Jilbab</button>
+                            <button onclick="checkAnswer(this, false)" class="btn-interactive p-3 text-xs font-semibold border-2 border-gold/40 rounded-xl hover:bg-gold-light transition">Make Up</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 8. GOSOK-GOSOK RAHASIA -->
+            <section class="mb-20 gs-reveal">
+                <div class="thick-gold-card p-6 rounded-3xl text-center relative overflow-hidden">
+                    <h3 class="font-serif text-2xl italic text-charcoal mb-2">Sebuah Rahasia...</h3>
+                    <p class="font-sans text-[10px] text-charcoal/50 uppercase tracking-widest mb-6">Gosok layar abu-abu di bawah ini</p>
+                    <div class="relative w-full aspect-square max-w-[280px] mx-auto rounded-xl overflow-hidden border-[3px] border-dashed border-gold/60 shadow-inner bg-gray-100">
+                        <img src="assets/foto-4.jpg" class="absolute inset-0 w-full h-full object-cover z-0" alt="Secret">
+                        <div class="absolute inset-0 z-0 flex items-center justify-center bg-black/40"><p class="text-white font-script text-3xl">Miss this?</p></div>
+                        <canvas id="scratch-canvas" class="absolute inset-0 w-full h-full z-10 touch-none"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 9. MESIN MEMORI ACAK -->
+            <section class="mb-10 gs-reveal">
+                <div class="bg-ivory p-6 rounded-3xl thick-gold-card text-center">
+                    <h3 class="font-serif text-xl italic text-charcoal mb-4">Mesin Memori Acak</h3>
+                    <p class="text-xs text-charcoal/70 mb-6 px-4">Tekan tombol di bawah untuk membangkitkan memori *random* kita.</p>
+                    
+                    <div id="memory-display" class="min-h-[80px] flex items-center justify-center bg-white border-2 border-gold/30 rounded-xl p-4 mb-6 shadow-inner font-sans text-sm font-medium text-charcoal italic">
+                        (Belum ada memori yang ditarik)
+                    </div>
+                    
+                    <button onclick="spinMemory()" class="btn-interactive bg-gradient-to-r from-gold to-gold-dark text-white text-xs font-bold tracking-widest uppercase py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition border border-white/30">Tarik Memori ✨</button>
+                </div>
+            </section>
+
+            <!-- 10. SOUNDTRACK & BUCKET LIST -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-20">
+                <!-- Soundtrack -->
+                <section class="thick-gold-card p-6 rounded-3xl gs-reveal">
+                    <h3 class="font-serif text-xl italic text-charcoal mb-5 border-b-2 border-gold/20 pb-2">Soundtrack Kita</h3>
+                    <p class="text-[9px] uppercase tracking-widest text-gold-dark mb-4 -mt-2">Ketuk untuk memutar</p>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3 cursor-pointer group" onclick="playMiniTrack('track-1', this)">
+                            <div class="w-10 h-10 bg-ivory border-2 border-gold/40 rounded-lg flex items-center justify-center text-gold text-sm shadow-sm group-hover:bg-gold group-hover:text-white transition icon-holder">🎵</div>
+                            <div>
+                                <p class="text-sm font-semibold text-charcoal track-title">Lagu Galau Legend</p>
+                                <p class="text-[10px] text-charcoal/60 mt-0.5">Saksi bisu tangisan patah hati</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 cursor-pointer group" onclick="playMiniTrack('track-2', this)">
+                            <div class="w-10 h-10 bg-ivory border-2 border-gold/40 rounded-lg flex items-center justify-center text-gold text-sm shadow-sm group-hover:bg-gold group-hover:text-white transition icon-holder">🎵</div>
+                            <div>
+                                <p class="text-sm font-semibold text-charcoal track-title">Anthem Perjalanan</p>
+                                <p class="text-[10px] text-charcoal/60 mt-0.5">Diputar di mobil saat keliling kota</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Janji Belum Usai -->
+                <section class="thick-gold-card p-6 rounded-3xl gs-reveal">
+                    <h3 class="font-serif text-xl italic text-charcoal mb-5 border-b-2 border-gold/20 pb-2">Janji Belum Usai</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-3 opacity-50"><div class="w-4 h-4 rounded bg-gold text-white flex items-center justify-center text-[10px] mt-0.5 shrink-0">✓</div><p class="text-xs text-charcoal line-through">Tumbuh dewasa bersama.</p></div>
+                        <div class="flex items-start gap-3 opacity-50"><div class="w-4 h-4 rounded bg-gold text-white flex items-center justify-center text-[10px] mt-0.5 shrink-0">✓</div><p class="text-xs text-charcoal line-through">Menemukan pria yang tepat untukmu.</p></div>
+                        <div class="flex items-start gap-3 opacity-50"><div class="w-4 h-4 rounded bg-gold text-white flex items-center justify-center text-[10px] mt-0.5 shrink-0">✓</div><p class="text-xs text-charcoal line-through">Staycation berdua setidaknya setahun sekali.</p></div>
+                        <div class="flex items-start gap-3 opacity-50"><div class="w-4 h-4 rounded bg-gold text-white flex items-center justify-center text-[10px] mt-0.5 shrink-0">✓</div><p class="text-xs text-charcoal line-through">Nongkrong ngopi sore ngetawain masa lalu.</p></div>
+                        <div class="flex items-start gap-3 opacity-50"><div class="w-4 h-4 rounded bg-gold text-white flex items-center justify-center text-[10px] mt-0.5 shrink-0">✓</div><p class="text-xs text-charcoal line-through">Nemenin kamu belanja bulanan buat rumah baru.</p></div>
+                        <div class="flex items-start gap-3"><div class="w-4 h-4 rounded border-2 border-gold flex items-center justify-center mt-0.5 shrink-0"></div><p class="text-xs text-charcoal font-medium">Menjadi tante paling asyik untuk anak-anakmu kelak.</p></div>
+                        <div class="flex items-start gap-3"><div class="w-4 h-4 rounded border-2 border-gold flex items-center justify-center mt-0.5 shrink-0"></div><p class="text-xs text-charcoal font-medium">Tetap jadi rumah pertamaku saat aku butuh tempat pulang.</p></div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 11. KADO SPESIAL INTERAKTIF -->
+            <section class="mb-20 gs-reveal">
+                <div id="gift-container" class="bg-ivory p-8 rounded-[2rem] border-[3px] border-dashed border-gold/60 text-center shadow-inner relative transition duration-300">
+                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-white px-4 py-1 text-[10px] tracking-[0.3em] uppercase text-gold-dark font-bold rounded border-2 border-gold/30">Kado Spesial</div>
+                    
+                    <div id="gift-unopened" class="flex flex-col items-center py-4">
+                        <p class="font-serif text-xl italic text-charcoal mb-2">Ada yang tertinggal untukmu...</p>
+                        <p class="font-sans text-[10px] text-charcoal/60 uppercase tracking-widest mb-6 font-bold">Ketuk kado berkali-kali untuk membuka!</p>
+                        <div id="the-gift" class="text-7xl cursor-pointer filter drop-shadow-lg mb-4 hover:scale-110 transition" onclick="tapGift()">🎁</div>
+                        <div class="w-full max-w-[150px] h-2 bg-gray-200 rounded-full overflow-hidden border border-gold/20">
+                            <div id="gift-progress" class="h-full bg-gradient-to-r from-gold-light to-gold w-0 transition-all duration-150"></div>
+                        </div>
+                    </div>
+
+                    <div id="gift-opened" class="hidden flex-col items-center opacity-0 py-4">
+                        <h4 class="font-script text-4xl gold-gradient-text mb-4">Kejutan!</h4>
+                        <div class="bg-white p-5 rounded-xl border-2 border-gold/40 shadow-md">
+                            <p class="text-sm text-charcoal/80 leading-relaxed font-sans font-medium text-justify">
+                                VOUCHER ADIK VIP <br><br>
+                                Voucher ini berlaku seumur hidup! Kamu bebas menukarkan voucher ini untuk: <br>
+                                1. Curhat tengah malam tanpa batas waktu.<br>
+                                2. Menculikmu jalan-jalan saat kamu butuh <strong>me-time</strong>.<br>
+                                3. Pelukan gratis kapanpun kamu merasa sedih.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 12. PESAN UNTUK SUAMI -->
+            <section class="mb-20 gs-reveal">
+                <div class="thick-gold-card p-8 rounded-[2rem] text-center relative">
+                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-ivory px-4 py-1 text-[10px] tracking-[0.3em] uppercase text-gold-dark font-bold rounded border-2 border-gold/40">Pesan Rahasia</div>
+                    <h3 class="font-serif text-2xl italic text-charcoal mb-6 mt-2">Teruntuk Suaminya...</h3>
+                    <div class="text-sm text-charcoal/90 leading-loose font-sans font-light text-justify space-y-4">
+                        <p>"Hari ini aku resmi menyerahkan posisi orang yang paling sering direpotkan kepadamu. Tolong jaga dia baik-baik.</p>
+                        <p>Kalau dia sedang kesal atau diam tiba-tiba, seringkali dia hanya butuh didengarkan tanpa dihakimi, dan dibelikan makanan manis kesukaannya. Jangan pernah habiskan air panas saat mandi pagi, karena dia pasti akan marah seharian.</p>
+                        <p>Pastikan kamu selalu memeluknya saat dia merasa dunia sedang terlalu berat. Dia mungkin terlihat mandiri dan kuat, tapi di dalamnya dia butuh tempat bersandar yang kokoh. Aku sudah menjaganya selama belasan tahun dengan penuh kasih sayang, jadi kumohon, pastikan senyum di wajahnya hari ini tidak pernah pudar dan terus bertahan seumur hidup. Tolong bahagiakan dia melebihi caraku membahagiakannya."</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 13. TOMBOL DARURAT -->
+            <section class="mb-20 gs-reveal text-center">
+                <p class="font-serif italic text-lg text-charcoal mb-6">Jika sewaktu-waktu kamu kangen...</p>
+                <button onclick="panicButton()" class="btn-interactive w-32 h-32 rounded-full bg-gradient-to-br from-red-400 to-red-600 shadow-[0_10px_20px_rgba(220,38,38,0.4)] border-[6px] border-white text-white font-black tracking-widest text-xl flex items-center justify-center mx-auto hover:scale-105 transition-all focus:outline-none">
+                    TEKAN
+                </button>
+                <p class="font-sans text-[10px] text-charcoal/50 font-bold uppercase tracking-widest mt-6">Tombol Darurat</p>
+            </section>
+
+            <!-- 14. VIDEO SECTION -->
+            <section class="mb-20 gs-reveal">
+                <h3 class="font-serif text-2xl italic text-center text-charcoal mb-6">Sebuah Pesan Terakhir</h3>
+                <div class="relative w-full max-w-2xl mx-auto aspect-video bg-black rounded-3xl overflow-hidden shadow-2xl border-4 border-gold/40 cursor-pointer group" onclick="toggleVideo()">
+                    <video id="wedding-video" src="assets/video-wedding.mp4" class="w-full h-full object-cover transition duration-500 group-hover:scale-105" playsinline></video>
+                    <div id="video-overlay" class="absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity duration-300">
+                        <div class="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg backdrop-blur group-hover:scale-110 transition border-2 border-gold/30">
+                            <svg class="w-8 h-8 text-gold-dark ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-center text-[10px] font-sans font-bold text-charcoal/50 mt-4 uppercase tracking-widest">Sentuh video untuk memutar</p>
+            </section>
+
+            <!-- 15. GUESTBOOK / BALASAN -->
+            <section class="mb-10 gs-reveal">
+                <h3 class="font-serif text-2xl italic text-center text-charcoal mb-6">Tinggalkan Balasan</h3>
+                <form onsubmit="submitReply(event)" class="thick-gold-card p-6 rounded-2xl mb-8">
+                    <input type="text" id="reply-name" placeholder="Tulis Namamu..." class="w-full mb-4 p-4 text-sm font-sans rounded-xl border-2 border-gray-200 focus:outline-none focus:border-gold bg-gray-50 transition" required>
+                    <textarea id="reply-msg" placeholder="Ketik balasan untuk Rinda..." class="w-full mb-4 p-4 text-sm font-sans rounded-xl border-2 border-gray-200 focus:outline-none focus:border-gold bg-gray-50 h-28 resize-none transition" required></textarea>
+                    <button type="submit" class="btn-interactive w-full bg-gradient-to-r from-gold to-gold-dark text-white text-xs font-bold tracking-widest uppercase py-4 rounded-xl shadow-lg hover:shadow-xl transition border border-white/20">Kirim Pesan</button>
+                </form>
+                <div id="reply-history" class="space-y-4"></div>
+            </section>
+
+            <!-- 16. TANDA TANGAN RINDA -->
+            <section class="text-center mt-20 mb-10 gs-reveal">
+                <div class="w-24 h-[2px] bg-gold/50 mx-auto mb-10"></div>
+                <p class="font-sans text-[10px] tracking-[0.2em] uppercase text-charcoal/60 mb-2 font-semibold">Selalu menyayangimu,</p>
+                <p class="font-script text-6xl gold-gradient-text py-2 drop-shadow-sm">Rinda</p>
+                <p class="font-serif italic text-sm text-charcoal/60 mt-2">Adik Tersayangmu</p>
+            </section>
+
+        </div> <!-- END LOCKED SECTIONS -->
+
+    </main>
+
+    <!-- 17. FOOTER BRANDING BAGIAN DALAM (FULL WIDTH DESKTOP & MOBILE - TERBUKA BERSAMA LOCKED SECTIONS) -->
+    <footer id="main-footer" class="w-full mt-10 hidden opacity-0 transition-opacity duration-1000 gs-reveal relative z-10">
+        <div class="w-full bg-black pt-16 pb-20 px-6 rounded-t-[3rem] border-t-[3px] border-gold/50 text-center flex flex-col items-center shadow-[0_-10px_30px_rgba(212,175,55,0.15)] relative">
+            <div class="w-16 h-[2px] bg-gold/40 mb-8"></div>
+            <p class="font-sans text-[10px] tracking-[0.3em] uppercase text-gold mb-6 font-bold">Exclusively Crafted By</p>
+            <img src="assets/logo.jpg" alt="The Queen Bucket" class="w-full max-w-[300px] object-contain mix-blend-screen">
+            <p class="font-serif text-[11px] text-gold/40 mt-10 tracking-widest uppercase">Digital Bouquet & Greeting Card</p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // --- WEB AUDIO API & SFX ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+        function initAudioContext() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+        function playTone(freq, type, duration, vol) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + duration);
+        }
+        function playClick() { initAudioContext(); playTone(600, 'sine', 0.1, 0.05); }
+        function playGiftTap() { initAudioContext(); playTone(400 + Math.random()*200, 'triangle', 0.1, 0.08); }
+        function playCorrect() { initAudioContext(); playTone(800, 'sine', 0.1, 0.1); setTimeout(() => playTone(1200, 'sine', 0.3, 0.1), 100); }
+        function playWrong() { initAudioContext(); playTone(300, 'sawtooth', 0.2, 0.05); setTimeout(() => playTone(250, 'square', 0.3, 0.05), 150); }
+        function playMagic() { initAudioContext(); [523, 659, 783, 1046, 1318].forEach((freq, i) => { setTimeout(() => playTone(freq, 'sine', 0.6, 0.08), i * 60); }); }
+
+        // --- PARTICLES ENGINE ---
+        function createParticles(x, y, amount = 20, color = 'gold', emoji = null) {
+            for(let i=0; i<amount; i++) {
+                let p = document.createElement('div');
+                p.className = 'fixed pointer-events-none z-[100] flex items-center justify-center font-bold';
+                
+                if (emoji) { p.innerText = emoji; p.style.fontSize = (Math.random()*15 + 15) + 'px'; } 
+                else {
+                    p.className += ' w-2 h-2 rounded-full';
+                    if (color === 'gold') p.style.backgroundColor = ['#D4AF37', '#F7E7CE', '#AA7C11', '#fff'][Math.floor(Math.random()*4)];
+                    else if (color === 'red') p.style.backgroundColor = ['#EF4444', '#F87171', '#DC2626', '#FECACA'][Math.floor(Math.random()*4)];
+                }
+                
+                p.style.left = x + 'px'; p.style.top = y + 'px'; document.body.appendChild(p);
+                gsap.to(p, {
+                    x: (Math.random()-0.5)*300, y: (Math.random()-0.5)*300 - 50, opacity: 0, scale: Math.random()*1.5 + 0.5, rotation: Math.random()*360, duration: 1 + Math.random(), ease: 'power2.out', onComplete: () => p.remove()
+                });
+            }
+        }
+
+        // --- HUJAN CONFETTI & KELOPAK BUNGA (RAIN EFFECT) ---
+        let confettiInterval;
+        function startConfettiRain() {
+            const container = document.getElementById('confetti-rain-container');
+            if (confettiInterval) return;
+
+            function spawnDrop() {
+                if (document.hidden) return;
+                const drop = document.createElement('div');
+                const type = Math.random();
+                
+                drop.style.position = 'absolute';
+                drop.style.top = '-25px';
+                drop.style.left = (Math.random() * 100) + 'vw';
+                drop.style.pointerEvents = 'none';
+
+                if (type < 0.45) {
+                    drop.style.width = (Math.random() * 6 + 5) + 'px';
+                    drop.style.height = (Math.random() * 10 + 6) + 'px';
+                    drop.style.background = 'linear-gradient(135deg, #F7E7CE, #D4AF37, #AA7C11)';
+                    drop.style.borderRadius = '2px';
+                    drop.style.opacity = Math.random() * 0.5 + 0.4;
+                } else if (type < 0.75) {
+                    const size = Math.random() * 7 + 7;
+                    drop.style.width = size + 'px';
+                    drop.style.height = size + 'px';
+                    drop.style.background = 'radial-gradient(circle, #dc2626, #991b1b)';
+                    drop.style.borderRadius = '50% 0 50% 50%';
+                    drop.style.opacity = Math.random() * 0.5 + 0.35;
+                } else {
+                    const size = Math.random() * 5 + 4;
+                    drop.style.width = size + 'px';
+                    drop.style.height = size + 'px';
+                    drop.style.background = '#FFFFFF';
+                    drop.style.borderRadius = '50%';
+                    drop.style.boxShadow = '0 0 6px #D4AF37';
+                    drop.style.opacity = Math.random() * 0.6 + 0.4;
+                }
+
+                container.appendChild(drop);
+
+                const duration = Math.random() * 5 + 6;
+                const sway = (Math.random() - 0.5) * 140;
+
+                gsap.to(drop, {
+                    y: window.innerHeight + 50,
+                    x: sway,
+                    rotation: Math.random() * 540 - 270,
+                    duration: duration,
+                    ease: 'none',
+                    onComplete: () => drop.remove()
+                });
+            }
+
+            for (let i = 0; i < 10; i++) {
+                setTimeout(spawnDrop, i * 200);
+            }
+            confettiInterval = setInterval(spawnDrop, 450);
+        }
+
+        // --- AUDIO BGM & OPEN LETTER ---
+        const audioLatar = document.getElementById('bg-music');
+        const iconPause = document.getElementById('icon-pause');
+        const iconPlay = document.getElementById('icon-play');
+        let isPlaying = false;
+
+        function openLetter(e) {
+            if(e) e.preventDefault(); initAudioContext(); playMagic(); 
+            createParticles(window.innerWidth/2, window.innerHeight/2, 50, 'gold');
+            audioLatar.volume = 0.5;
+            audioLatar.play().then(() => { isPlaying = true; }).catch(() => { isPlaying = false; iconPause.classList.add('hidden'); iconPlay.classList.remove('hidden'); });
+
+            document.body.classList.remove('locked');
+            gsap.to('#cover-overlay', {
+                yPercent: -100, opacity: 0, duration: 1.2, ease: 'power3.inOut',
+                onComplete: () => {
+                    document.getElementById('cover-overlay').style.display = 'none';
+                    const mainContent = document.getElementById('main-content');
+                    mainContent.classList.remove('hidden');
+                    setTimeout(() => {
+                        mainContent.classList.remove('opacity-0');
+                        document.getElementById('music-control').classList.remove('opacity-0', 'pointer-events-none');
+                        startConfettiRain();
+                        gsap.fromTo('#notif-banner', { y: -30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: 'back.out(1.7)' });
+                        playCorrect();
+                    }, 50);
+                }
+            });
+        }
+
+        function toggleAudio() {
+            document.getElementById('track-1').pause(); document.getElementById('track-2').pause();
+            resetMiniTrackUI();
+            if (isPlaying) { audioLatar.pause(); iconPause.classList.add('hidden'); iconPlay.classList.remove('hidden'); } 
+            else { audioLatar.play(); iconPlay.classList.add('hidden'); iconPause.classList.remove('hidden'); }
+            isPlaying = !isPlaying;
+        }
+
+        // --- VIDEO NOTIFIKASI DARI PENGIRIM (16:9, AUTO-MUTE BGM, COLLAPSE TO BUTTON) ---
+        const senderVideo = document.getElementById('sender-video');
+        const senderOverlay = document.getElementById('sender-video-overlay');
+        let isScrollUnlocked = false;
+
+        function toggleSenderVideo() {
+            playClick();
+            if (senderVideo.paused) {
+                // Matikan lagu latar & soundtrack sementara saat video pengirim diputar
+                audioLatar.pause();
+                document.getElementById('track-1').pause();
+                document.getElementById('track-2').pause();
+                resetMiniTrackUI();
+                iconPause.classList.add('hidden');
+                iconPlay.classList.remove('hidden');
+
+                senderVideo.play();
+                senderOverlay.classList.add('opacity-0', 'pointer-events-none');
+                if (!isScrollUnlocked) {
+                    document.getElementById('lock-text').innerText = "Menonton video... Tunggu sampai selesai untuk membuka surat!";
+                }
+            } else {
+                senderVideo.pause();
+                senderOverlay.classList.remove('opacity-0', 'pointer-events-none');
+                // Nyalakan kembali lagu latar saat video dijeda
+                if (isPlaying) {
+                    audioLatar.play();
+                    iconPlay.classList.add('hidden');
+                    iconPause.classList.remove('hidden');
+                }
+            }
+        }
+
+        function rewatchSenderVideo() {
+            playClick();
+            const videoWrapper = document.getElementById('sender-video-wrapper');
+            const replayContainer = document.getElementById('sender-video-replay-container');
+
+            replayContainer.classList.add('hidden');
+            videoWrapper.classList.remove('hidden');
+            gsap.fromTo(videoWrapper, { opacity: 0, y: -15 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' });
+
+            senderVideo.currentTime = 0;
+            toggleSenderVideo();
+        }
+
+        senderVideo.addEventListener('ended', () => {
+            senderOverlay.classList.remove('opacity-0', 'pointer-events-none');
+
+            // Otomatis nyalakan kembali lagu latar begitu video selesai
+            isPlaying = true;
+            audioLatar.play().catch(() => {});
+            iconPlay.classList.add('hidden');
+            iconPause.classList.remove('hidden');
+
+            const videoWrapper = document.getElementById('sender-video-wrapper');
+            const replayContainer = document.getElementById('sender-video-replay-container');
+
+            if (!isScrollUnlocked) {
+                isScrollUnlocked = true;
+                playMagic();
+
+                // Update status notifikasi jika dibuka ulang nanti
+                const pingDot = document.getElementById('notif-ping');
+                if (pingDot) pingDot.classList.add('hidden');
+                document.getElementById('notif-status-pill').innerText = "Sudah Ditonton";
+                document.getElementById('notif-subtext').innerText = "Video selesai ditonton! Surat pernikahan di bawah telah terbuka ✨";
+
+                const badge = document.getElementById('scroll-lock-badge');
+                badge.classList.replace('border-gold/40', 'border-green-500');
+                badge.classList.add('bg-green-50', 'text-green-800');
+                document.getElementById('lock-icon').innerText = '🔓';
+                document.getElementById('lock-text').innerText = 'Surat Terbuka! Silakan scroll ke bawah untuk membaca ↓';
+
+                // Buka kunci seluruh halaman surat
+                const lockedContainer = document.getElementById('locked-sections');
+                const mainFooter = document.getElementById('main-footer');
+                lockedContainer.classList.remove('hidden');
+                mainFooter.classList.remove('hidden');
+
+                createParticles(window.innerWidth / 2, window.innerHeight / 3, 45, 'gold');
+
+                // Ganti section video ucapan menjadi tombol
+                gsap.to(videoWrapper, {
+                    opacity: 0,
+                    scale: 0.95,
+                    duration: 0.4,
+                    onComplete: () => {
+                        videoWrapper.classList.add('hidden');
+                        videoWrapper.style.opacity = '';
+                        videoWrapper.style.transform = '';
+                        replayContainer.classList.remove('hidden');
+                        gsap.fromTo(replayContainer, { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.4 });
+                        ScrollTrigger.refresh();
+                    }
+                });
+
+                setTimeout(() => {
+                    lockedContainer.classList.remove('opacity-0');
+                    mainFooter.classList.remove('opacity-0');
+                    initAutoScroll();
+                    initScratchCard();
+                    initGSAP();
+                    ScrollTrigger.refresh();
+                }, 100);
+            } else {
+                // Jika ditonton ulang dan selesai, kembali menjadi tombol
+                gsap.to(videoWrapper, {
+                    opacity: 0,
+                    scale: 0.95,
+                    duration: 0.4,
+                    onComplete: () => {
+                        videoWrapper.classList.add('hidden');
+                        videoWrapper.style.opacity = '';
+                        videoWrapper.style.transform = '';
+                        replayContainer.classList.remove('hidden');
+                        gsap.fromTo(replayContainer, { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.4 });
+                    }
+                });
+            }
+        });
+
+        // --- FILOSOFI BOUQUET INTERAKTIF (POLOS DULU -> KLIK TOMBOL -> MUNCUL ANGKA) ---
+        function activateBouquetHotspots() {
+            playMagic();
+            const btnContainer = document.getElementById('activate-hotspot-container');
+            const hotspotWrapper = document.getElementById('hotspot-wrapper');
+            const philBox = document.getElementById('philosophy-box');
+            const subtext = document.getElementById('bouquet-subtext');
+
+            btnContainer.classList.add('hidden');
+            hotspotWrapper.classList.remove('hidden');
+            philBox.classList.remove('hidden');
+            philBox.classList.add('flex');
+
+            subtext.innerHTML = 'Sentuh <strong class="text-gold-dark">4 titik berkilau</strong> pada gambar buket di bawah ini untuk membuka maknanya satu per satu!';
+
+            setTimeout(() => {
+                hotspotWrapper.classList.remove('opacity-0');
+                gsap.fromTo('.hotspot-btn', { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, stagger: 0.12, ease: 'back.out(2)' });
+                gsap.fromTo(philBox, { y: 15, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 });
+            }, 50);
+        }
+
+        const philosophyData = {
+            1: {
+                badge: "Titik 1 • Mahkota Kecil (Tiara)",
+                title: "Ratu di Hari Bahagiamu",
+                desc: "Sesuai nama The Queen Bouquet, mahkota mungil di atas mawar ini adalah pengingat bahwa hari ini kamu adalah ratunya. Di mataku, kamu akan selalu jadi kakak perempuan paling berharga yang layak dirayakan."
+            },
+            2: {
+                badge: "Titik 2 • Mawar Satin Merah Berkilau",
+                title: "Kasih Sayang yang Tak Akan Layu",
+                desc: "Bunga asli memang indah, tapi ia akan mengering dalam beberapa hari. Aku sengaja memilih mawar pita satin merah bertabur glitter ini agar tetap utuh selamanya—sama seperti doa dan sayangku ke kamu yang ngga akan pernah pudar."
+            },
+            3: {
+                badge: "Titik 3 • Sepasang Kupu-Kupu Putih",
+                title: "Metamorfosis ke Babak Baru",
+                desc: "Kupu-kupu melambangkan transformasi yang indah. Hari ini kamu terbang memulai kehidupan baru bersama suamimu, membangun rumah tangga yang hangat dan penuh kebahagiaan."
+            },
+            4: {
+                badge: "Titik 4 • Balutan Hitam Elegan & Pita",
+                title: "Keteguhan & Ikatan Persaudaraan",
+                desc: "Lipatan kertas hitam yang mengelilingi mawar merah ini melambangkan perlindungan yang kokoh, sementara untaian pita merah dan mutiaranya adalah simbol ikatan persaudaraan kita yang tak akan pernah terputus."
+            }
+        };
+
+        const unlockedHotspots = new Set();
+
+        function revealPhilosophy(id, btnElement) {
+            playCorrect();
+            const data = philosophyData[id];
+            const box = document.getElementById('philosophy-box');
+            
+            unlockedHotspots.add(id);
+            document.getElementById('phil-badge').innerHTML = `${data.badge} (<span id="hotspot-counter">${unlockedHotspots.size}</span>/4)`;
+            document.getElementById('phil-title').innerText = data.title;
+            document.getElementById('phil-desc').innerText = data.desc;
+
+            gsap.fromTo(box, { scale: 0.95, opacity: 0.6 }, { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.7)' });
+
+            btnElement.classList.remove('hotspot-pulse', 'bg-gold');
+            btnElement.classList.add('bg-green-600', 'scale-95');
+            btnElement.innerHTML = '✓';
+
+            const rect = btnElement.getBoundingClientRect();
+            createParticles(rect.left + rect.width / 2, rect.top + rect.height / 2, 18, 'gold');
+
+            if (unlockedHotspots.size === 4) {
+                const completeBanner = document.getElementById('philosophy-complete');
+                if (completeBanner.classList.contains('hidden')) {
+                    setTimeout(() => {
+                        playMagic();
+                        completeBanner.classList.remove('hidden');
+                        gsap.fromTo(completeBanner, { y: 15, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' });
+                    }, 400);
+                }
+            }
+        }
+
+        // --- SOUNDTRACK (MINI PLAYER) ---
+        let currentMiniTrack = null;
+        function playMiniTrack(trackId, element) {
+            playClick();
+            const track = document.getElementById(trackId);
+            
+            if(currentMiniTrack === track && !track.paused) {
+                track.pause();
+                resetMiniTrackUI();
+                if(isPlaying) audioLatar.play();
+                return;
+            }
+
+            audioLatar.pause();
+            document.getElementById('track-1').pause();
+            document.getElementById('track-2').pause();
+            resetMiniTrackUI();
+
+            track.volume = 0.7; 
+            if (trackId === 'track-2') {
+                track.currentTime = 5;
+            } else {
+                track.currentTime = 0;
+            }
+
+            track.play();
+            currentMiniTrack = track;
+
+            const iconHolder = element.querySelector('.icon-holder');
+            const title = element.querySelector('.track-title');
+            iconHolder.classList.add('bg-gold', 'text-white', 'animate-pulse');
+            iconHolder.innerHTML = '🎶';
+            title.classList.add('text-gold-dark');
+
+            track.onended = () => { resetMiniTrackUI(); if(isPlaying) audioLatar.play(); };
+        }
+
+        function resetMiniTrackUI() {
+            document.querySelectorAll('.icon-holder').forEach(el => {
+                el.classList.remove('bg-gold', 'text-white', 'animate-pulse');
+                el.innerHTML = '🎵';
+            });
+            document.querySelectorAll('.track-title').forEach(el => el.classList.remove('text-gold-dark'));
+        }
+
+        // --- TIMELINE POLAROID ---
+        function togglePolaroid(element) {
+            playClick();
+            const allPolaroids = document.querySelectorAll('.timeline-polaroid');
+            const isActive = element.classList.contains('!rotate-0');
+            allPolaroids.forEach(p => p.classList.remove('!rotate-0', 'scale-110', 'z-20', 'shadow-2xl'));
+            if (!isActive) element.classList.add('!rotate-0', 'scale-110', 'z-20', 'shadow-2xl');
+        }
+
+        // --- KADO INTERAKTIF ---
+        let giftTaps = 0; const maxTaps = 12;
+        const giftEl = document.getElementById('the-gift'); const progEl = document.getElementById('gift-progress');
+        function tapGift() {
+            if (giftTaps >= maxTaps) return;
+            giftTaps++; playGiftTap();
+            giftEl.classList.remove('shake-active'); void giftEl.offsetWidth; giftEl.classList.add('shake-active');
+            
+            const rect = giftEl.getBoundingClientRect();
+            createParticles(rect.left + rect.width/2, rect.top + rect.height/2, 3, 'gold');
+            
+            progEl.style.width = (giftTaps / maxTaps * 100) + '%';
+            if (giftTaps >= maxTaps) {
+                setTimeout(() => {
+                    playMagic(); createParticles(rect.left + rect.width/2, rect.top + rect.height/2, 60, 'gold');
+                    document.getElementById('gift-unopened').classList.add('hidden');
+                    const opened = document.getElementById('gift-opened'); opened.classList.remove('hidden');
+                    gsap.fromTo(opened, { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: 'back.out(1.5)' });
+                    document.getElementById('gift-container').classList.replace('bg-ivory', 'bg-white');
+                    document.getElementById('gift-container').classList.replace('border-dashed', 'border-solid');
+                }, 300);
+            }
+        }
+
+        // --- KUIS INTERAKTIF ---
+        function checkAnswer(btn, isCorrect) {
+            const container = btn.parentElement;
+            container.querySelectorAll('button').forEach(b => { b.disabled = true; b.classList.add('opacity-50', 'cursor-not-allowed'); });
+            btn.classList.remove('opacity-50', 'border-gold/40', 'hover:bg-gold-light');
+            const rect = btn.getBoundingClientRect();
+            if(isCorrect) { 
+                playCorrect(); btn.classList.add('bg-green-500', 'text-white', 'border-green-500', 'opacity-100', 'scale-105'); 
+                btn.innerHTML += " ✓ Benar!"; createParticles(rect.left + rect.width/2, rect.top + rect.height/2, 15, 'gold'); 
+            } else { 
+                playWrong(); btn.classList.add('bg-red-500', 'text-white', 'border-red-500', 'opacity-100'); 
+                btn.innerHTML += " ✗ Salah"; gsap.to(btn, {x: [-5, 5, -5, 5, 0], duration: 0.3}); 
+            }
+        }
+
+        // --- KARTU GOSOK ---
+        let scratchInitialized = false;
+        function initScratchCard() {
+            if (scratchInitialized) return;
+            const canvas = document.getElementById('scratch-canvas');
+            if (!canvas || canvas.offsetWidth === 0) return;
+            scratchInitialized = true;
+
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
+            ctx.fillStyle = '#cbd5e1'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#94a3b8'; ctx.font = '14px sans-serif'; ctx.textAlign = 'center';
+            for(let i=0; i<10; i++) { for(let j=0; j<10; j++) { ctx.fillText('GOSOK', i*50, j*50); } }
+
+            let isDrawing = false;
+            ctx.globalCompositeOperation = 'destination-out';
+
+            function scratch(x, y) { ctx.beginPath(); ctx.arc(x, y, 22, 0, Math.PI * 2); ctx.fill(); }
+            function getCoordinates(e) {
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return { x: clientX - rect.left, y: clientY - rect.top };
+            }
+
+            canvas.addEventListener('mousedown', (e) => { isDrawing = true; scratch(getCoordinates(e).x, getCoordinates(e).y); });
+            canvas.addEventListener('mousemove', (e) => { if (isDrawing) scratch(getCoordinates(e).x, getCoordinates(e).y); });
+            canvas.addEventListener('mouseup', () => isDrawing = false);
+            canvas.addEventListener('mouseleave', () => isDrawing = false);
+            canvas.addEventListener('touchstart', (e) => { e.preventDefault(); isDrawing = true; scratch(getCoordinates(e).x, getCoordinates(e).y); }, {passive: false});
+            canvas.addEventListener('touchmove', (e) => { e.preventDefault(); if (isDrawing) scratch(getCoordinates(e).x, getCoordinates(e).y); }, {passive: false});
+            canvas.addEventListener('touchend', () => isDrawing = false);
+        }
+
+        // --- MESIN MEMORI (GACHA) ---
+        const memories = [
+            "Malam di mana kita nangis bareng gara-gara nonton drakor sedih 😂",
+            "Waktu kamu marahin cowok yang berani nyakitin aku. Pahlawan banget! 🦸‍♀️",
+            "Ingat tragedi mie instan gosong jam 2 pagi? Bau hangusnya nempel seharian.",
+            "Momen kita numpang tidur di kamar ibu karena ketakutan habis nonton horor 👻",
+            "Tiba-tiba keliling kota malam-malam cuma buat cari martabak kesukaanmu."
+        ];
+        function spinMemory() {
+            playClick();
+            const display = document.getElementById('memory-display');
+            display.innerHTML = '<span class="animate-pulse">Menggali ingatan... ⏳</span>';
+            setTimeout(() => {
+                playMagic();
+                const randomMem = memories[Math.floor(Math.random() * memories.length)];
+                display.innerHTML = `"${randomMem}"`;
+                gsap.fromTo(display, {scale: 0.9, opacity: 0.5}, {scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(2)'});
+            }, 800);
+        }
+
+        // --- TOMBOL DARURAT ---
+        function panicButton() {
+            playMagic();
+            createParticles(window.innerWidth/2, window.innerHeight/2, 80, null, '❤️');
+            setTimeout(() => { alert("Jangan cuma tekan tombol, segera telepon atau chat aku sekarang juga! - Rinda 🥰"); }, 500);
+        }
+
+        // --- GUESTBOOK / BALASAN (DIKOSONGKAN SECARA DEFAULT) ---
+        const STORAGE_KEY = 'weddingReplies_clean';
+        localStorage.removeItem('weddingReplies');
+
+        const historyContainer = document.getElementById('reply-history');
+        function renderReplies() {
+            const replies = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; 
+            historyContainer.innerHTML = '';
+            if(replies.length === 0) { 
+                historyContainer.innerHTML = '<p class="text-center text-xs text-charcoal/40 italic py-4 font-medium">Belum ada balasan. Jadilah yang pertama!</p>'; 
+                return; 
+            }
+            replies.reverse().forEach(reply => {
+                const card = document.createElement('div'); card.className = "thick-gold-card p-4 rounded-xl";
+                card.innerHTML = `<p class="font-serif font-bold text-gold-dark text-sm mb-1">${reply.name}</p><p class="font-sans text-[13px] text-charcoal/80 leading-relaxed font-medium">${reply.message}</p>`; historyContainer.appendChild(card);
+            });
+        }
+        function submitReply(e) {
+            e.preventDefault(); playCorrect();
+            const replies = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            replies.push({ name: document.getElementById('reply-name').value, message: document.getElementById('reply-msg').value });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(replies));
+            document.getElementById('reply-name').value = ''; document.getElementById('reply-msg').value = ''; renderReplies(); 
+        }
+        renderReplies();
+
+        // --- KONTROL LAINNYA (SLIDER & VIDEO BAWAH TANPA MATIKAN LAGU) ---
+        let autoScrollStarted = false;
+        function initAutoScroll() {
+            if (autoScrollStarted) return;
+            const slider = document.getElementById('photo-slider');
+            if (!slider || slider.offsetWidth === 0) return;
+            autoScrollStarted = true;
+
+            slider.innerHTML += slider.innerHTML; 
+            let scrollPos = 0; let isHovered = false;
+            slider.addEventListener('touchstart', () => isHovered = true); slider.addEventListener('touchend', () => { isHovered = false; scrollPos = slider.scrollLeft; });
+            function scrollLoop() { if (!isHovered) { scrollPos += 0.5; if (scrollPos >= slider.scrollWidth / 2) scrollPos = 0; slider.scrollLeft = scrollPos; } requestAnimationFrame(scrollLoop); }
+            scrollLoop();
+        }
+        
+        const video = document.getElementById('wedding-video'); const overlay = document.getElementById('video-overlay');
+        function toggleVideo() {
+            playClick(); 
+            if (video.paused) { 
+                video.play(); 
+                overlay.classList.add('opacity-0'); 
+            } else { 
+                video.pause(); 
+                overlay.classList.remove('opacity-0'); 
+            }
+        }
+        video.addEventListener('ended', () => { overlay.classList.remove('opacity-0'); });
+
+        function initGSAP() {
+            document.querySelectorAll('.gs-reveal').forEach((elem) => { gsap.fromTo(elem, { autoAlpha: 0, y: 30 }, { duration: 1, autoAlpha: 1, y: 0, ease: 'power2.out', scrollTrigger: { trigger: elem, start: 'top 85%' } }); });
+        }
+    </script>
+</body>
+</html>
